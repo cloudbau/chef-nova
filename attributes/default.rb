@@ -110,6 +110,7 @@ default["nova"]["config"]["snapshot_image_format"] = "qcow2"
 default["nova"]["config"]["start_guests_on_host_boot"] = true
 # requires https://review.openstack.org/#/c/8423/
 default["nova"]["config"]["resume_guests_state_on_host_boot"] = false
+default["nova"]["config"]["volume_api"] = "nova_volume"
 
 # quota settings
 default["nova"]["config"]["quota_security_groups"] = 50
