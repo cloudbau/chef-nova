@@ -99,6 +99,7 @@ default["nova"]["libvirt"]["remove_unused_base_images"] = true
 default["nova"]["libvirt"]["remove_unused_resized_minimum_age_seconds"] = 3600
 default["nova"]["libvirt"]["remove_unused_original_minimum_age_seconds"] = 3600
 default["nova"]["libvirt"]["checksum_base_images"] = false
+defailt["nova"]['libvirt']['tcp_listen'] = false
 default["nova"]["config"]["availability_zone"] = "nova"
 default["nova"]["config"]["default_schedule_zone"] = "nova"
 default["nova"]["config"]["force_raw_images"] = false
