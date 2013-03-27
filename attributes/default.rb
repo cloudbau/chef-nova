@@ -114,8 +114,18 @@ default["nova"]["config"]["resume_guests_state_on_host_boot"] = false
 default["nova"]["config"]["volume_api"] = "nova_volume"
 
 # quota settings
-default["nova"]["config"]["quota_security_groups"] = 50
-default["nova"]["config"]["quota_security_group_rules"] = 20
+default["nova"]["config"]["quotas"] = { "quota_security_groups" => 50
+                                       "quota_security_group_rules" => 20,
+                                       'quota_cores' => 10,
+                                       'quota_floating_ips' => 10,
+                                       'quota_gigabytes' => 1000,
+                                       'quota_injected_file_content_bytes' => 10,
+                                       'quota_injected_file_path_bytes' => 10,
+                                       'quota_injected_files' => 10,
+                                       'quota_instances' => 10,
+                                       'quota_metadata_items' => 10,
+                                       'quota_ram' => 10,
+                                       'quota_volumes' => 10}
 
 default["nova"]["ratelimit"]["settings"] = {
     "generic-post-limit" => { "verb" => "POST", "uri" => "*", "regex" => ".*", "limit" => "10", "interval" => "MINUTE" },
