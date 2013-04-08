@@ -114,7 +114,7 @@ default["nova"]["config"]["resume_guests_state_on_host_boot"] = false
 default["nova"]["config"]["volume_api"] = "nova_volume"
 
 # quota settings
-default["nova"]["config"]["quotas"] = { "quota_security_groups" => 50
+default["nova"]["config"]["quotas"] = { "quota_security_groups" => 50,
                                        "quota_security_group_rules" => 20,
                                        'quota_cores' => 10,
                                        'quota_floating_ips' => 10,
