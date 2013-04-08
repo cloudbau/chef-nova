@@ -109,7 +109,7 @@ start_guests_on_host_boot=<%= @start_guests_on_host_boot %>
 resume_guests_state_on_host_boot=<%= @resume_guests_state_on_host_boot %>
 
 ##### default Quotas
-<% @quotas.each |quota, value| do %>
+<% @quotas.each do |quota, value| %>
 <%= quota %>=<%= value %>
 <% end %>
 
