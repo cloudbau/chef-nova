@@ -63,6 +63,7 @@ image_service=nova.image.glance.GlanceImageService
 glance_api_servers=<%= @glance_api_ipaddress %>:<%= @glance_api_port %>
 
 ##### COMPUTE #####
+compute_driver=libvirt.LibvirtDriver
 compute_manager=nova.compute.manager.ComputeManager
 sql_connection=mysql://<%= @user %>:<%= @passwd %>@<%= @db_ipaddress %>/<%= @db_name %>
 connection_type=libvirt
