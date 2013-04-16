@@ -124,7 +124,7 @@ default["nova"]["config"]["quotas"] = { "quota_security_groups" => 50,
                                        'quota_injected_files' => 10,
                                        'quota_instances' => 10,
                                        'quota_metadata_items' => 10,
-                                       'quota_ram' => 10,
+                                       'quota_ram' => 8192,
                                        'quota_volumes' => 10}
 
 default["nova"]["ratelimit"]["settings"] = {
