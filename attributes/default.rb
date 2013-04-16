@@ -190,6 +190,8 @@ when "ubuntu"
     "nova_compute_service" => "nova-compute",
     "nova_network_packages" => ["iptables", "nova-network"],
     "nova_network_service" => "nova-network",
+    "nova_conductor_packages" => [],
+    "nova_conductor_service" => "nova-conductor",
     "nova_scheduler_packages" => ["nova-scheduler"],
     "nova_scheduler_service" => "nova-scheduler",
     "nova_vncproxy_packages" => ["nova-vncproxy"],
