@@ -56,6 +56,8 @@ novnc_proxy_endpoint = get_bind_endpoint("nova", "novnc")
 glance_endpoint = get_access_endpoint("glance-api", "glance", "api")
 nova_api_endpoint = get_access_endpoint("nova-api-os-compute", "nova", "api") || {}
 ec2_public_endpoint = get_access_endpoint("nova-api-ec2", "nova", "ec2-public") || {}
+quantum_endpoint = get_access_endpoint("quantum-server", "quantum", "api") || {}
+quantum = get_settings_by_role("quantum-server", "quantum")
 
 Chef::Log.debug("nova::nova-common:mysql_info|#{mysql_info}")
 Chef::Log.debug("nova::nova-common:rabbit_ip|#{rabbit_info}")
@@ -118,7 +120,12 @@ template "/etc/nova/nova.conf" do
     "start_guests_on_host_boot" => node["nova"]["config"]["start_guests_on_host_boot"],
     "resume_guests_state_on_host_boot" => node["nova"]["config"]["resume_guests_state_on_host_boot"],
     "quotas" => node["nova"]["config"]["quotas"],
-    "volume_api" => node["nova"]["config"]["volume_api"]
+    "volume_api" => node["nova"]["config"]["volume_api"],
+    "quantum_tenant_name" => quantum["service_tenant_name"],
+    "quantum_user_name" => quantum["service_user"],
+    "quantum_user_pass" => quantum["service_pass"],
+    "quantum_api_ipaddress" => quantum_endpoint["host"],
+    "quantum_api_port" => quantum_endpoint["port"]
   )
 end
 

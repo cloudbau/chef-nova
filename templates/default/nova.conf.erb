@@ -147,3 +147,20 @@ iscsi_helper=<%= @iscsi_helper %>
 volume_api_class=nova.volume.cinder.API
 enabled_apis=ec2,osapi_compute,metadata
 <%- end %>
+
+##### QUANTUM #####
+network_api_class=nova.network.quantumv2.api.API
+quantum_url=http://<%= @quantum_api_ipaddress %>:<%= @quantum_api_port %>
+quantum_auth_strategy=keystone
+quantum_admin_tenant_name=<%= @quantum_tenant_name %>
+
+quantum_admin_username=<%= @quantum_user_name %>
+quantum_admin_password=<%= @quantum_user_pass %>
+quantum_admin_auth_url=http://<%= @keystone_api_ipaddress %>:<%= @keystone_service_port %>/v2.0/
+
+service_quantum_metadata_proxy = True
+# quantum_metadata_proxy_shared_secret = blabla
+
+libvirt_vif_driver=nova.virt.libvirt.vif.LibvirtOpenVswitchDriver
+libvirt_ovs_bridge=br-int
+libvirt_vif_type=ethernet
