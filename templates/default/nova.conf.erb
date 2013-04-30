@@ -159,7 +159,7 @@ quantum_admin_password=<%= @quantum_user_pass %>
 quantum_admin_auth_url=http://<%= @keystone_api_ipaddress %>:<%= @keystone_service_port %>/v2.0/
 
 service_quantum_metadata_proxy = True
-# quantum_metadata_proxy_shared_secret = blabla
+quantum_metadata_proxy_shared_secret = blabla
 
 libvirt_vif_driver=nova.virt.libvirt.vif.LibvirtOpenVswitchDriver
 libvirt_ovs_bridge=br-int
