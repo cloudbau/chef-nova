@@ -160,7 +160,9 @@ quantum_admin_auth_url=http://<%= @keystone_api_ipaddress %>:<%= @keystone_servi
 
 service_quantum_metadata_proxy = True
 quantum_metadata_proxy_shared_secret = blabla
+security_group_api=quantum
 
-libvirt_vif_driver=nova.virt.libvirt.vif.LibvirtOpenVswitchDriver
+libvirt_vif_driver=nova.virt.libvirt.vif.LibvirtHybridOVSBridgeDriver
 libvirt_ovs_bridge=br-int
 libvirt_vif_type=ethernet
+firewall_driver=nova.virt.firewall.NoopFirewallDriver
