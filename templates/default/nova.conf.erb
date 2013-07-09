@@ -164,7 +164,21 @@ service_quantum_metadata_proxy = True
 quantum_metadata_proxy_shared_secret = blabla
 security_group_api=quantum
 
+<% if @quantum_plugin == "ovs" %>
 libvirt_vif_driver=nova.virt.libvirt.vif.LibvirtHybridOVSBridgeDriver
 libvirt_ovs_bridge=br-int
 libvirt_vif_type=ethernet
 firewall_driver=nova.virt.firewall.NoopFirewallDriver
+<% elsif @quantum_plugin == "midonet" %>
+libvirt_vif_driver=midonet.nova.virt.libvirt.vif.MidonetVifDriver
+firewall_driver=midonet.nova.network.sg.MidonetFirewallDriver
+security_group_handler=midonet.nova.network.sg.MidonetSecurityGroupHandler
+<% end %>
+
+<% if @quantum_plugin == "midonet" %>
+[MIDONET]
+midonet_uri = http://192.168.100.12:8080/midonet-api
+username = admin
+password = passw0rd
+project_id = midonet_provider
+<% end %>

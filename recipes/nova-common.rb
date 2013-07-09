@@ -125,7 +125,12 @@ template "/etc/nova/nova.conf" do
     "quantum_user_name" => quantum["service_user"],
     "quantum_user_pass" => quantum["service_pass"],
     "quantum_api_ipaddress" => quantum_endpoint["host"],
-    "quantum_api_port" => quantum_endpoint["port"]
+    "quantum_api_port" => quantum_endpoint["port"],
+    "quantum_plugin" => quantum["plugin"],
+    "midonet_api_url" => node["midonet"]["api"]["protocol"] + "://" + node["midonet"]["api"]["pub_hostname"] + ":" + node["midonet"]["api"]["port"] + node["midonet"]["api"]["path"],
+    "midonet_username" => node["midonet"]["keystone-user"],
+    "midonet_password" => node["midonet"]["keystone-password"],
+    "midonet_tenant" => node["midonet"]["keystone-tenant"]
   )
 end
 
