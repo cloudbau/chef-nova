@@ -51,6 +51,10 @@ default["nova"]["syslog"]["use"] = true
 default["nova"]["syslog"]["facility"] = "LOG_LOCAL1"
 default["nova"]["syslog"]["config_facility"] = "local1"
 
+default["nova"]["logging.conf"]["use"] = false
+default["nova"]["logging.conf"]["formatter"] = "nova.openstack.common.log.LegacyFormatter"
+default["nova"]["logging.conf"]["logfile"] = "/var/log/nova/nova.log"
+
 # can this be wedged into the "api" endpoint?
 default["nova"]["compute"]["region"] = "RegionOne"
 
