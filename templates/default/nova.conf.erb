@@ -177,8 +177,8 @@ security_group_handler=midonet.nova.network.sg.MidonetSecurityGroupHandler
 
 <% if @quantum_plugin == "midonet" %>
 [MIDONET]
-midonet_uri = node["midonet"]["api"]["protocol"] + "://" + node["midonet"]["api"]["pub_hostname"] + ":" + node["midonet"]["api"]["port"] + node["midonet"]["api"]["path"],
-username = node["midonet"]["keystone_user"]
-password = node["midonet"]["keystone_password"]
-project_id = node["midonet"]["keystone_tenant"]
+midonet_uri=<%= node["midonet"]["api"]["protocol"] + "://" + node["midonet"]["api"]["pub_hostname"] + ":" + node["midonet"]["api"]["port"] + node["midonet"]["api"]["path"] %>
+username=<%= node["midonet"]["keystone_user"] %>
+password=<%= node["midonet"]["keystone_password"] %>
+project_id=<%= node["midonet"]["keystone_tenant"] %>
 <% end %>
