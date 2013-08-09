@@ -116,6 +116,7 @@ default["nova"]["config"]["start_guests_on_host_boot"] = true
 # requires https://review.openstack.org/#/c/8423/
 default["nova"]["config"]["resume_guests_state_on_host_boot"] = false
 default["nova"]["config"]["volume_api"] = "nova_volume"
+default["nova"]["config"]["security_group_api"] = "quantum"
 
 # quota settings
 default["nova"]["config"]["quotas"] = { "quota_security_groups" => 50,

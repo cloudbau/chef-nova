@@ -162,7 +162,7 @@ quantum_admin_auth_url=http://<%= @keystone_api_ipaddress %>:<%= @keystone_servi
 
 service_quantum_metadata_proxy = True
 quantum_metadata_proxy_shared_secret = blabla
-security_group_api=quantum
+security_group_api=<%= @security_group_api %>
 
 <% if @quantum_plugin == "ovs" %>
 libvirt_vif_driver=nova.virt.libvirt.vif.LibvirtHybridOVSBridgeDriver
@@ -177,8 +177,8 @@ security_group_handler=midonet.nova.network.sg.MidonetSecurityGroupHandler
 
 <% if @quantum_plugin == "midonet" %>
 [MIDONET]
-midonet_uri = http://192.168.100.12:8080/midonet-api
-username = admin
-password = passw0rd
-project_id = midonet_provider
+midonet_uri = node["midonet"]["api"]["protocol"] + "://" + node["midonet"]["api"]["pub_hostname"] + ":" + node["midonet"]["api"]["port"] + node["midonet"]["api"]["path"],
+username = node["midonet"]["keystone_user"]
+password = node["midonet"]["keystone_password"]
+project_id = node["midonet"]["keystone_tenant"]
 <% end %>
