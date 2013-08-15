@@ -72,6 +72,8 @@ Chef::Log.debug("nova::nova-common:glance_endpoint|#{glance_endpoint}")
 Chef::Log.debug("nova::nova-common:nova_api_endpoint|#{nova_api_endpoint}")
 Chef::Log.debug("nova::nova-common:ec2_public_endpoint|#{ec2_public_endpoint}")
 
+quantum_metadata_shared_secret = get_settings_by_recipe("quantum\:\:metadata-agent", "quantum")["metadata_shared_secret"]
+
 # TODO: need to re-evaluate this for accuracy
 template "/etc/nova/nova.conf" do
   source "nova.conf.erb"
@@ -127,7 +129,8 @@ template "/etc/nova/nova.conf" do
     "quantum_user_pass" => quantum["service_pass"],
     "quantum_api_ipaddress" => quantum_endpoint["host"],
     "quantum_api_port" => quantum_endpoint["port"],
-    "quantum_plugin" => quantum["plugin"]
+    "quantum_plugin" => quantum["plugin"],
+    "quantum_metadata_shared_secret" => quantum_metadata_shared_secret
   )
 end
 
