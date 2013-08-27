@@ -162,7 +162,3 @@ template "/root/openrc" do
     "ec2_secret_key" => node["credentials"]["EC2"]["admin"]["secret"]
   )
 end
-
-execute "enable nova login" do
-  command "usermod -s /bin/sh nova"
-end
