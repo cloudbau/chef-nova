@@ -36,6 +36,7 @@ platform_options["nova_vncproxy_consoleauth_packages"].each do |pkg|
 end
 
 service "nova-vncproxy" do
+  provider Chef::Provider::Service::Upstart if platform?("ubuntu")
   service_name platform_options["nova_vncproxy_service"]
   supports :status => true, :restart => true
   action :enable
@@ -43,6 +44,7 @@ service "nova-vncproxy" do
 end
 
 service "nova-consoleauth" do
+  provider Chef::Provider::Service::Upstart if platform?("ubuntu")
   service_name platform_options["nova_vncproxy_consoleauth_service"]
   supports :status => true, :restart => true
   action :enable
