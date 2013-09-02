@@ -27,13 +27,13 @@ nova_compute_packages = platform_options["nova_compute_packages"]
 
 if platform?(%w(ubuntu))
   if node["nova"]["libvirt"]["virt_type"] == "kvm"
-    nova_compute_packages << "nova-compute-kvm"
+    add_package = "nova-compute-kvm"
   elsif node["nova"]["libvirt"]["virt_type"] == "qemu"
-    nova_compute_packages << "nova-compute-qemu"
+    add_package = "nova-compute-qemu"
   end
 end
 
-nova_compute_packages.each do |pkg|
+(nova_compute_packages + [ add_package ]).each do |pkg|
   package pkg do
     action :upgrade
     options platform_options["package_overrides"]
