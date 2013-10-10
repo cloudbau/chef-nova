@@ -39,6 +39,8 @@ create_db_and_user("mysql",
 
 execute "nova-manage db sync" do
   command "nova-manage db sync"
+  user "nova"
+  group "nova"
   action :run
   # hvolkmer: I don't see a need for a guard here: The command is idempodent
   # anyway: It does nothing when the db is already at current version.
