@@ -43,6 +43,7 @@ network_manager=<%= @network_manager %>
 public_interface=<%= @public_interface %>
 fixed_range=<%= @fixed_range %>
 dmz_cidr=<%= @dmz_cidr %>
+default_floating_pool=public
 <% if %w(fedora redhat centos).include? node.platform -%>
 # https://bugzilla.redhat.com/show_bug.cgi?id=788485 - not released in epel yet
 force_dhcp_release=false
