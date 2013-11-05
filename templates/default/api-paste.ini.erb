@@ -3,6 +3,7 @@
 <% if not node["custom_template_banner"].nil? -%>
 <%= node["custom_template_banner"] %>
 <% end -%>
+
 ############
 # Metadata #
 ############
@@ -24,16 +25,10 @@ paste.app_factory = nova.api.metadata.handler:MetadataRequestHandler.factory
 use = egg:Paste#urlmap
 /services/Cloud: ec2cloud
 
-[pipeline:ec2cloud]
-#pipeline = ec2faultwrap logrequest ec2noauth cloudrequest authorizer validator ec2executor
-# NOTE(vish): use the following pipeline for deprecated auth
-# pipeline = ec2faultwrap logrequest authenticate cloudrequest authorizer validator ec2executor
-# NOTE(vish): use the following pipeline for keystone auth
-pipeline = ec2faultwrap logrequest ec2keystoneauth cloudrequest authorizer validator ec2executor
-
-# pipeline = logrequest authenticate cloudrequest authorizer ec2executor
-# pipeline = logrequest ec2lockout authenticate cloudrequest authorizer ec2executor
-#pipeline = logrequest totoken authtoken keystonecontext cloudrequest authorizer ec2executor
+[composite:ec2cloud]
+use = call:nova.api.auth:pipeline_factory
+noauth = ec2faultwrap logrequest ec2noauth cloudrequest validator ec2executor
+keystone = ec2faultwrap logrequest ec2keystoneauth cloudrequest validator ec2executor
 
 [filter:ec2faultwrap]
 paste.filter_factory = nova.api.ec2:FaultWrapper.factory
@@ -44,18 +39,11 @@ paste.filter_factory = nova.api.ec2:RequestLogging.factory
 [filter:ec2lockout]
 paste.filter_factory = nova.api.ec2:Lockout.factory
 
-# Not referenced anywhere else in this file
-# [filter:totoken]
-# paste.filter_factory = keystoneclient.middleware.ec2_token:EC2Token.factory
-
 [filter:ec2keystoneauth]
 paste.filter_factory = nova.api.ec2:EC2KeystoneAuth.factory
 
 [filter:ec2noauth]
 paste.filter_factory = nova.api.ec2:NoAuth.factory
-
-[filter:authenticate]
-paste.filter_factory = nova.api.ec2:Authenticate.factory
 
 [filter:cloudrequest]
 controller = nova.api.ec2.cloud.CloudController
@@ -79,68 +67,49 @@ use = call:nova.api.openstack.urlmap:urlmap_factory
 /: oscomputeversions
 /v1.1: openstack_compute_api_v2
 /v2: openstack_compute_api_v2
+/v3: openstack_compute_api_v3
 
-[composite:osapi_volume]
-use = call:nova.api.openstack.urlmap:urlmap_factory
-/: osvolumeversions
-/v1: openstack_volume_api_v1
+[composite:openstack_compute_api_v2]
+use = call:nova.api.auth:pipeline_factory
+noauth = faultwrap sizelimit noauth ratelimit osapi_compute_app_v2
+keystone = faultwrap sizelimit authtoken keystonecontext ratelimit osapi_compute_app_v2
+keystone_nolimit = faultwrap sizelimit authtoken keystonecontext osapi_compute_app_v2
 
-[pipeline:openstack_compute_api_v2]
-#pipeline = faultwrap noauth ratelimit osapi_compute_app_v2
-# NOTE(vish): use the following pipeline for deprecated auth
-# pipeline = faultwrap auth ratelimit osapi_compute_app_v2
-# NOTE(vish): use the following pipeline for keystone auth
-<% if node["nova"]["ratelimit"]["api"]["enabled"] -%>
-pipeline = faultwrap authtoken keystonecontext ratelimit osapi_compute_app_v2
-<% else -%>
-pipeline = faultwrap authtoken keystonecontext osapi_compute_app_v2
-<% end -%>
-
-[pipeline:openstack_volume_api_v1]
-#pipeline = faultwrap noauth ratelimit osapi_volume_app_v1
-# NOTE(vish): use the following pipeline for deprecated auth
-# pipeline = faultwrap auth ratelimit osapi_volume_app_v1
-# NOTE(vish): use the following pipeline for keystone auth
-<% if node["nova"]["ratelimit"]["volume"]["enabled"] -%>
-pipeline = faultwrap authtoken keystonecontext ratelimit osapi_volume_app_v1
-<% else -%>
-pipeline = faultwrap authtoken keystonecontext osapi_volume_app_v1
-<% end -%>
+[composite:openstack_compute_api_v3]
+use = call:nova.api.auth:pipeline_factory
+noauth = faultwrap sizelimit noauth_v3 ratelimit_v3 osapi_compute_app_v3
+keystone = faultwrap sizelimit authtoken keystonecontext ratelimit_v3 osapi_compute_app_v3
+keystone_nolimit = faultwrap sizelimit authtoken keystonecontext osapi_compute_app_v3
 
 [filter:faultwrap]
 paste.filter_factory = nova.api.openstack:FaultWrapper.factory
 
-[filter:auth]
-paste.filter_factory = nova.api.openstack.auth:AuthMiddleware.factory
-
 [filter:noauth]
 paste.filter_factory = nova.api.openstack.auth:NoAuthMiddleware.factory
 
+[filter:noauth_v3]
+paste.filter_factory = nova.api.openstack.auth:NoAuthMiddlewareV3.factory
+
 [filter:ratelimit]
 paste.filter_factory = nova.api.openstack.compute.limits:RateLimitingMiddleware.factory
-limits =
-<%= node["nova"]["ratelimit"]["settings"].values.inject([]) { |output,v| output << "  ( #{v['verb']}, #{v['uri']}, #{v['regex']}, #{v['limit']}, #{v['interval']} )" }.join(";\n") %>
+
+[filter:ratelimit_v3]
+paste.filter_factory = nova.api.openstack.compute.plugins.v3.limits:RateLimitingMiddleware.factory
+
+[filter:sizelimit]
+paste.filter_factory = nova.api.sizelimit:RequestBodySizeLimiter.factory
 
 [app:osapi_compute_app_v2]
 paste.app_factory = nova.api.openstack.compute:APIRouter.factory
 
+[app:osapi_compute_app_v3]
+paste.app_factory = nova.api.openstack.compute:APIRouterV3.factory
+
 [pipeline:oscomputeversions]
 pipeline = faultwrap oscomputeversionapp
 
-[app:osapi_volume_app_v1]
-paste.app_factory = nova.api.openstack.volume:APIRouter.factory
-
 [app:oscomputeversionapp]
 paste.app_factory = nova.api.openstack.compute.versions:Versions.factory
-
-[pipeline:osvolumeversions]
-pipeline = faultwrap osvolumeversionapp
-
-[app:osvolumeversionapp]
-paste.app_factory = nova.api.openstack.volume.versions:Versions.factory
-
-# [filter:extensions]
-# paste.filter_factory = nova.api.openstack.extensions:ExtensionMiddleware.factory
 
 ##########
 # Shared #
@@ -163,4 +132,9 @@ auth_port = <%= @admin_port %>
 auth_protocol = http
 auth_uri = http://<%= @keystone_api_ipaddress %>:<%= @service_port %>/v2.0/
 admin_token = <%= @admin_token %>
-signing_dir = /var/run/nova/
+# signing_dir is configurable, but the default behavior of the authtoken
+# middleware should be sufficient.  It will create a temporary directory
+# in the home directory for the user the nova process is running as.
+#signing_dir = /var/lib/nova/keystone-signing
+# Workaround for https://bugs.launchpad.net/nova/+bug/1154809
+auth_version = v2.0
