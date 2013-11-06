@@ -50,6 +50,14 @@ service "nova-api-ec2" do
   subscribes :restart, resources(:template => "/etc/nova/nova.conf"), :delayed
 end
 
+
+service "nova-objectstore" do
+  service_name platform_options["api_ec2_service"]
+  supports :status => true, :restart => true
+  action :enable
+  subscribes :restart, resources(:template => "/etc/nova/nova.conf"), :delayed
+end
+
 ks_admin_endpoint = get_access_endpoint("keystone", "keystone", "admin-api")
 ks_service_endpoint = get_access_endpoint("keystone", "keystone", "service-api")
 keystone = get_settings_by_role("keystone","keystone")
@@ -122,6 +130,7 @@ template "/etc/nova/api-paste.ini" do
             :admin_token => keystone["admin_token"]
   )
   notifies :restart, resources(:service => "nova-api-ec2"), :delayed
+  notifies :restart, resources(:service => "nova-objectstore"), :delayed
 end
 
 # Register EC2 Endpoint
