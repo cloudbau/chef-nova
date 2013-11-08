@@ -52,7 +52,7 @@ end
 
 
 service "nova-objectstore" do
-  service_name platform_options["api_ec2_service"]
+  service_name platform_options["api_ec2_object_store_service"]
   supports :status => true, :restart => true
   action :enable
   subscribes :restart, resources(:template => "/etc/nova/nova.conf"), :delayed
